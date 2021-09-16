@@ -9,7 +9,7 @@ from .chat import Chat
 
 class Round(object):
 
-    def __init__(self, word, player_drawing, players):
+    def __init__(self, word, player_drawing, players, game):
         """
         init object
         :param word: str
@@ -25,6 +25,35 @@ class Round(object):
         self.chat = Chat(self)
         start_new_thread(self.time_thread, ())
 
+    def skip(self):
+        """
+        Returns true if round skipped threshold is met
+        :return: bool
+        """
+        self.skips += 1
+        if self.skips > len(self.players) - 2:
+            self.skips = 0
+            return True
+
+        return False
+
+    def get_scores(self):
+        """
+        Returns all the Player Scores
+        :return: dict{Player: int}
+        """
+        return self.players_scores
+
+    def get_score(self, player):
+        """
+        Returns the Score of the `player`
+        :param player: Player
+        :return: int
+        """
+        if player in self.players_scores:
+            return self.players_scores[player]
+        else:
+            raise Exception("Player not in Score list!")
     def time_thread(self):
         """
         Runs in a thread to keep track of time
